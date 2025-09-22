@@ -1,7 +1,7 @@
 ---
 title: "Lab 02 - Plastic waste"
-author: "Votre nom"
-date: "La date"
+author: "Yifan Jin"
+date: "2025-09-15"
 output: github_document
 ---
 
@@ -28,51 +28,82 @@ plastic_waste <- plastic_waste %>%
 ### Exercise 1
 
 ```{r plastic-waste-continent}
-# insert code here
+
+ggplot(data = plastic_waste, aes(x = plastic_waste_per_cap))+
+  geom_histogram()+
+  facet_wrap(~continent)
+
 ```
 
 ### Exercise 2
 
 ```{r plastic-waste-density}
-# insert code here
+
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap,
+                     color = continent,
+                     fill = continent))+
+  geom_density(alpha = 0.5)
+
 ```
 
-Réponse à la question...
+Le réglage de couleur se retrouve dans mapping (aes) qui dépend d'une , alors que la transparence est dans setting, vu qu'elle ne dépend pas d'une variable.
 
 ### Exercise 3
 
 Boxplot:
 
 ```{r plastic-waste-boxplot}
-# insert code here
+
+ggplot(data = plastic_waste, aes(x = continent,
+                                 y = plastic_waste_per_cap))+
+  geom_boxplot()
+
 ```
 
 Violin plot:
 
 ```{r plastic-waste-violin}
-# insert code here
+
+ggplot(data = plastic_waste, aes(x = continent,
+                                 y = plastic_waste_per_cap))+
+  geom_violin()
+
 ```
 
-Réponse à la question...
+Le violin plot permet de comparer la tendance d'augmentation à l'intérieur de chaque continent, ce que le box plot ne permet pas.
 
 ### Exercise 4
 
 
 ```{r plastic-waste-mismanaged}
-# insert code here
+
+ggplot(data = plastic_waste, aes(x = plastic_waste_per_cap,
+                                 y = mismanaged_plastic_waste_per_cap,
+                                 colour = continent))+
+  geom_point()
+
 ```
 
-Réponse à la question...
+Il y a deux tendances principaux.
 
 ### Exercise 5
 
 
 ```{r plastic-waste-population-total}
-# insert code here
+
+ggplot(data = plastic_waste, aes(x = plastic_waste_per_cap,
+                                 y = total_pop))+
+  geom_point()
+
 ```
 
 ```{r plastic-waste-population-coastal}
-# insert code here
+
+ggplot(data = plastic_waste, aes(x = mismanaged_plastic_waste,
+                                 y = coastal_pop))+
+  geom_point()
+
 ```
 
 Réponse à la question...
@@ -82,5 +113,23 @@ Réponse à la question...
 Recréez la visualisation:
 
 ```{r recreate-viz}
-# insert code here
+
+plastic_waste_coastal <- plastic_waste %>% 
+  mutate(coastal_pop_prop = coastal_pop / total_pop) %>%
+  filter(plastic_waste_per_cap < 3)
+
+ggplot(data = plastic_waste, aes(x = coastal_pop,
+                                 y = plastic_waste_per_cap,
+                                 colour = continent))+
+  geom_point(position = "jitter")+
+  coord_cartesian(xlim = c(0, 15000000),
+                  ylim = c(0, 0.7))+
+  geom_smooth(data = filter(plastic_waste, continent =="Africa"))+
+  scale_color_viridis_d()+
+  labs(title = "Quantite de dechets plastiques vs Population de la population cotiere",
+       subtitle = "Selon le continent",
+       x = "Proportion de la population cotiere (Coastal / total population)",
+       y = "Nombre de dechets plastiques par habitant",
+       color = "Continent")
+
 ```
